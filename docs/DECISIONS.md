@@ -1,6 +1,6 @@
 # Entscheidungen
 
-Punkte, die SPEC.md und DESIGN.md offen ließen und die mit dem Nutzer geklärt wurden (Stand: 07.11.2026, M1–M6 umgesetzt, M7 in Arbeit).
+Punkte, die SPEC.md und DESIGN.md offen ließen und die mit dem Nutzer geklärt wurden (Stand: 09.11.2026, M1–M7 umgesetzt, M8 geplant).
 
 ## Arbeitsweise
 
@@ -12,6 +12,16 @@ Punkte, die SPEC.md und DESIGN.md offen ließen und die mit dem Nutzer geklärt 
 
 - Projekt heißt **Cost-Tracker** (Repo `cost-tracker`), Domain **kosten.codekorb.de**, Android-Paket `de.codekorb.kosten`, Postfach `kosten@codekorb.de`. Grund: neben Abos kommen Raten und Sparpläne dazu (M7).
 - Verweise auf den Design-Canvas „Abo-Tracker Design“ und das Claude-Doc bleiben, das sind Namen externer Dokumente.
+
+## M8 · PWA statt Android-App (09.11.2026)
+
+- Statt nativer Android-App wird die Web-Version eine **installierbare PWA** (Android-Chrome und Desktop). Grund: kein EAS/Firebase/APK-Verteilen, Updates kommen mit jedem Deploy sofort an.
+- Nativer Android-Code bleibt im Repo, wird aber nicht gebaut; Android-App „später optional“.
+- **Push über Web Push (VAPID)**, verschickt per `minishlink/web-push` im Scheduler (kein Dauerprozess). Eigene Tabelle `web_push_subscriptions`; `push_tokens` bleibt für Android.
+- **Login im Web per Sanctum-Session-Cookie** (httpOnly, CSRF, Remember-Cookie) statt Token im `sessionStorage`. Bearer-Token bleibt für native Clients.
+- Offline: Service Worker cacht die App-Hülle; Daten weiter aus dem bestehenden `localStorage`-Cache. API-Antworten werden nie im Service Worker gecacht.
+- **Nur Android + Desktop**, kein iPhone-Feinschliff (Safari läuft, aber ohne Apple-Meta-Tags und Installationshinweis).
+- Plan: `docs/START-M8.md`.
 
 ## M7 · Raten & Sparen
 
@@ -73,4 +83,4 @@ Punkte, die SPEC.md und DESIGN.md offen ließen und die mit dem Nutzer geklärt 
   - Statistik: „Seltenere Zahlungen“ statt „Nächste Jahreszahlungen“ (enthält auch Quartalsabos).
   - Web: Ohne Session wird auf `/login` umgeleitet (vorher „Unmatched Route“ unter `/(auth)`), und der Daten-Cache im `localStorage` wird geleert.
 - Echter Sparkasse-Export (siehe M4).
-- Server-Einrichtung: Netcup, GitHub-Secrets, Cronjob, EAS/FCM, `EAS_PROJECT_ID` (siehe `docs/DEPLOY.md`).
+- Server-Einrichtung: Netcup, GitHub-Secrets, Cronjob, ab M8 VAPID-Schlüssel (siehe `docs/DEPLOY.md`). EAS/FCM entfällt vorerst.
