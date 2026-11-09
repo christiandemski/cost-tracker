@@ -42,7 +42,7 @@ QUEUE_CONNECTION=database
 
 MAIL_MAILER=smtp
 MAIL_SCHEME=smtps
-MAIL_HOST=…          # SMTP-Server aus dem Netcup-Panel
+MAIL_HOST=mxe9bf.netcup.net
 MAIL_PORT=465
 MAIL_USERNAME=kosten@codekorb.de
 MAIL_PASSWORD=…
